@@ -32,7 +32,7 @@
   function translate() { document.querySelectorAll('[data-opt]').forEach(el => { el.textContent = t(el.dataset.opt); }); renderLookupStatus(); renderTargets(); renderExpiryTabs(); renderChain(); for (const leg of legsContainer.children) renderContractStatus(leg); if (lastResult) render(lastResult); }
   function clear() { lastResult = null; ['opt-cost','opt-max-profit','opt-max-loss','opt-breakeven'].forEach(id => $(id).textContent = '—'); $('opt-chart').innerHTML = ''; $('opt-table').innerHTML = ''; $('opt-error').textContent = ''; }
   function reset() { resetLookup(); $('opt-spot').value = 100; $('opt-expiry').value = dateString(day(today()) + 30 * 86400000); $('opt-rate').value = 4; $('opt-dividend').value = 0; $('opt-shares').value = 0; $('opt-entry').value = 100; $('opt-low').value = 50; $('opt-high').value = 150; legsContainer.innerHTML = ''; addLeg(); clear(); }
-  let lookupGeneration = 0, selectedStock = null, selectedStockName = '', chain = [], stockAuto = {}, stockRevision = {}, lookupStatus = {key:'', detail:''}, pendingChainCenter = false;
+  let lookupGeneration = 0, selectedStock = null, selectedStockName = '', chain = [], chainState = 'hidden', stockAuto = {}, stockRevision = {}, lookupStatus = {key:'', detail:''}, pendingChainCenter = false;
   function clearAutoStock() { for (const id of Object.keys(stockAuto)) if (stockAuto[id]) $(id).value = ''; stockAuto = {}; }
   function setLookupStatus(key, detail = '') { lookupStatus = {key, detail}; renderLookupStatus(); }
   function renderLookupStatus() { $('opt-lookup-status').textContent = [lookupStatus.key ? t(lookupStatus.key) : '', lookupStatus.detail].filter(Boolean).join(' · '); }
@@ -55,7 +55,7 @@
     select.value = [...select.options].some(o => o.value === prior) ? prior : '0';
   }
   function renderExpiryTabs() {
-    const container = $('opt-expiry-tabs'), select = $('opt-expirations'); container.replaceChildren();
+    const container = $('opt-expiry-tabs'), select = $('opt-expirations'), previousScrollLeft = container.scrollLeft; container.replaceChildren();
     if (select.disabled) return;
     for (const option of select.options) {
       const remaining = Math.max(0, Math.round((day(option.value) - day(today())) / 86400000));
@@ -66,10 +66,19 @@
       button.append(date, days); button.setAttribute('aria-pressed', String(option.value === select.value));
       button.addEventListener('click', () => { if (select.value !== option.value) { select.value = option.value; loadChain(); } }); container.appendChild(button);
     }
+    container.scrollLeft = previousScrollLeft;
   }
   function renderChain() {
     const body = $('opt-chain-body'), scroll = $('opt-chain-panel').querySelector('.opt-chain-scroll'), previousScrollTop = scroll.scrollTop;
-    body.replaceChildren(); $('opt-chain-panel').hidden = !chain.length; if (!chain.length) return;
+    body.replaceChildren();
+    $('opt-chain-panel').hidden = chainState === 'hidden';
+    scroll.setAttribute('aria-busy', String(chainState === 'loading'));
+    if (chainState === 'hidden') return;
+    if (chainState !== 'ready') {
+      const row = document.createElement('tr'), cell = document.createElement('td');
+      cell.colSpan = 9; cell.className = 'opt-chain-message'; cell.setAttribute('role', 'status');
+      cell.textContent = t(chainState); row.appendChild(cell); body.appendChild(row); return;
+    }
     const groups = new Map(); chain.forEach((item, index) => { const strike = Number(item.strike); if (!groups.has(strike)) groups.set(strike, {call:[], put:[]}); groups.get(strike)[item.type].push({item,index}); });
     const spot = Number($('opt-spot').value), spotValid = $('opt-spot').value !== '' && Number.isFinite(spot) && spot > 0;
     const display = (value, pct = false) => value === null || value === undefined || value === '' || !Number.isFinite(Number(value)) || Number(value) < 0 ? '—' : `${fmt(Number(value) * (pct ? 100 : 1))}${pct ? '%' : ''}`;
@@ -125,7 +134,7 @@
     $('opt-chain-target').value = 'new';
   }
   function clearAutoFields(leg) { for (const field of ['strike', 'premium', 'volatility']) if (leg._auto && leg._auto[field]) leg.querySelector(`.leg-${field}`).value = ''; leg._auto = {}; }
-  function clearChain() { pendingChainCenter = false; chain = []; $('opt-chain-panel').hidden = true; $('opt-chain-body').replaceChildren(); $('opt-chain-selection').textContent = '';  [...legsContainer.children].forEach(leg => { clearAutoFields(leg); populateContracts(leg); }); clear(); }
+  function clearChain() { pendingChainCenter = false; chain = []; chainState = 'hidden'; $('opt-chain-panel').querySelector('.opt-chain-scroll').style.minHeight = ''; $('opt-chain-panel').hidden = true; $('opt-chain-body').replaceChildren(); $('opt-chain-selection').textContent = '';  [...legsContainer.children].forEach(leg => { clearAutoFields(leg); populateContracts(leg); }); clear(); }
   function resetLookup() {
     lookupGeneration++; selectedStock = null; clearChain(); stockAuto = {}; $('opt-symbol').value = ''; $('opt-stock-results').replaceChildren(); $('opt-stock-results').hidden = true;
     $('opt-expiry-tabs').replaceChildren(); const select = $('opt-expirations'); select.replaceChildren(); const option = document.createElement('option'); option.value = ''; option.dataset.opt = 'chooseStock'; option.textContent = t('chooseStock'); select.appendChild(option); select.disabled = true; $('opt-refresh').disabled = true; setLookupStatus('');
@@ -170,14 +179,16 @@
   }
   async function loadChain(stockNote = '') {
     if (!selectedStock || !$('opt-expirations').value) return;
-    const generation = ++lookupGeneration, expiration = $('opt-expirations').value, symbol = selectedStock; clearChain(); renderExpiryTabs(); $('opt-expiry').value = expiration; clear(); setLookupStatus('loading');
+    const generation = ++lookupGeneration, expiration = $('opt-expirations').value, symbol = selectedStock, scroll = $('opt-chain-panel').querySelector('.opt-chain-scroll'), oldHeight = scroll.clientHeight; clearChain(); if (oldHeight) scroll.style.minHeight = `${oldHeight}px`; chainState = 'loading'; renderExpiryTabs(); renderChain(); $('opt-expiry').value = expiration; clear(); setLookupStatus('loading');
     try {
       const data = await getJSON('/api/options/chain', {symbol, expiration, source:'alpaca'}); if (generation !== lookupGeneration) return;
       chain = (Array.isArray(data.options) ? data.options : []).filter(item => item && ['call','put'].includes(item.type) && Number.isFinite(Number(item.strike)) && Number(item.strike) > 0 && item.symbol);
+      chainState = chain.length ? 'ready' : 'noContracts';
+      if (chain.length) scroll.style.minHeight = '';
       [...legsContainer.children].forEach(populateContracts);
-      renderChain(); centerChain();
+      renderChain(); if (chain.length) centerChain();
       setLookupStatus(chain.length ? 'chooseContract' : 'noContracts', [data.source || 'Alpaca indicative', stockNote].filter(Boolean).join(' · '));
-    } catch (error) { if (generation === lookupGeneration) setLookupStatus(configurationKey(error)); }
+    } catch (error) { if (generation === lookupGeneration) { chainState = configurationKey(error); renderChain(); setLookupStatus(chainState); } }
   }
   function selectContract(leg) {
     const index = Number(leg.querySelector('.leg-contract').value) - 1, contract = chain[index];
