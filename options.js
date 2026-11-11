@@ -5,7 +5,7 @@
   };
   Object.assign(translations, {
     chartProfit:['到期盈亏','Profit / loss'], chartControls:['使用左右方向键查看不同股价','Use left and right arrow keys to explore prices'],
-    chainTitle:['期权链','Option chain'], chainHelp:['点击任一报价，填入所选头寸。无行情显示为 —。','Select any quote to fill the chosen leg. Missing values are shown as —.'], applyTo:['填入头寸','Apply to'], addNewLeg:['添加新头寸','Add a new leg'], bid:['买价','Bid'], ask:['卖价','Ask'], last:['最新价','Last'], chainApplied:['已填入','Applied to'], quoteTime:['报价时间','Quote time'], ivTime:['波动率时间','IV time'], optionSource:['期权数据源','Option data source'], configureAlpaca:['请在服务端运行 python3 configure_alpaca.py 配置密钥后重启服务。','Run python3 configure_alpaca.py on the server to configure keys, then restart.'], quoteNoteTradier:['Tradier 行情可能延迟。价格优先使用买卖中间价，否则使用最近成交价；价格和隐含波动率均可修改。','Tradier quotes may be delayed. Premium uses the bid/ask midpoint when available, otherwise the last trade. Premium and implied volatility can be edited.'],
+    bidSize:['买量','Bid size'], askSize:['卖量','Ask size'], daysLeft:['天','days'], chainTitle:['期权链','Option chain'], chainHelp:['点击任一报价，填入所选头寸。无行情显示为 —。','Select any quote to fill the chosen leg. Missing values are shown as —.'], applyTo:['填入头寸','Apply to'], addNewLeg:['添加新头寸','Add a new leg'], bid:['买价','Bid'], ask:['卖价','Ask'], last:['最新价','Last'], chainApplied:['已填入','Applied to'], quoteTime:['报价时间','Quote time'], ivTime:['波动率时间','IV time'], optionSource:['期权数据源','Option data source'], configureAlpaca:['请在服务端运行 python3 configure_alpaca.py 配置密钥后重启服务。','Run python3 configure_alpaca.py on the server to configure keys, then restart.'], quoteNoteTradier:['Tradier 行情可能延迟。价格优先使用买卖中间价，否则使用最近成交价；价格和隐含波动率均可修改。','Tradier quotes may be delayed. Premium uses the bid/ask midpoint when available, otherwise the last trade. Premium and implied volatility can be edited.'],
     lookupTitle:['股票与期权行情','Stock and option quotes'],lookupHelp:['搜索美股并选择到期日，为每个头寸选择合约。也可以手动输入。','Search US stocks and choose an expiration, then select a contract for each leg. Manual entry remains available.'],ticker:['股票名称或代码','Stock name or ticker'],search:['搜索股票','Search'],chooseExpiry:['期权到期日','Option expiration'],chooseStock:['请先选择股票','Select a stock first'],refresh:['刷新期权链','Refresh chain'],quoteNote:['Alpaca Indicative 提供经过调整的参考报价，并非实际 OPRA 报价；成交数据延迟 15 分钟，非实时可交易报价。价格优先使用买卖中间价，否则使用最近成交价；价格和隐含波动率均可修改。','Alpaca Indicative quotes are modified rather than actual OPRA quotes; trades are delayed by 15 minutes. These are not live, executable quotes. Premium uses the bid/ask midpoint when available, otherwise the last trade. Premium and implied volatility can be edited.'],contract:['选择期权合约','Select option contract'],manual:['手动输入','Manual entry'],loading:['正在获取行情…','Loading quotes…'],noStocks:['没有找到匹配的美股。','No matching US stocks found.'],searchFailed:['股票搜索失败，请稍后重试。','Stock search failed. Please try again.'],chooseResult:['请选择一只股票。','Select a stock.'],noExpiries:['此股票没有可用的期权到期日。','No option expirations are available for this stock.'],noContracts:['该到期日没有可用合约。','No contracts available for this expiration.'],chainFailed:['期权行情不可用。请检查服务配置和网络后重试。','Option quotes are unavailable. Check the service configuration and connection, then retry.'],emptyTicker:['请输入股票名称或代码。','Enter a stock name or ticker.'],chooseContract:['已加载期权链，请为每个头寸选择合约。','Option chain loaded. Select a contract for each leg.'],missingPrice:['无有效价格，请手动填写','No price available; enter it manually'],missingIV:['无隐含波动率，请手动填写','No implied volatility available; enter it manually'],midpoint:['买卖中间价','Bid/ask midpoint'],lastTrade:['最近成交价','Last trade'],selected:['已选择','Selected'],quoteUnavailable:['股价不可用，请手动输入。','Stock quote unavailable; enter the stock price manually.'],configure:['请在服务端设置 TRADIER_API_TOKEN 后重启服务。','Set TRADIER_API_TOKEN on the server and restart it.']
   });
   const lang = () => $('language').value === 'en' ? 1 : 0;
@@ -58,7 +58,12 @@
     const container = $('opt-expiry-tabs'), select = $('opt-expirations'); container.replaceChildren();
     if (select.disabled) return;
     for (const option of select.options) {
-      const button = document.createElement('button'); button.type = 'button'; button.textContent = option.value; button.setAttribute('aria-pressed', String(option.value === select.value));
+      const remaining = Math.max(0, Math.round((day(option.value) - day(today())) / 86400000));
+      option.textContent = `${option.value} · ${remaining} ${t('daysLeft')}`;
+      const button = document.createElement('button'); button.type = 'button';
+      const date = document.createElement('span'); date.textContent = option.value;
+      const days = document.createElement('small'); days.textContent = `${remaining} ${t('daysLeft')}`;
+      button.append(date, days); button.setAttribute('aria-pressed', String(option.value === select.value));
       button.addEventListener('click', () => { if (select.value !== option.value) { select.value = option.value; loadChain(); } }); container.appendChild(button);
     }
   }
@@ -69,11 +74,22 @@
     const spot = Number($('opt-spot').value), spotValid = $('opt-spot').value !== '' && Number.isFinite(spot) && spot > 0;
     const display = (value, pct = false) => value === null || value === undefined || value === '' || !Number.isFinite(Number(value)) || Number(value) < 0 ? '—' : `${fmt(Number(value) * (pct ? 100 : 1))}${pct ? '%' : ''}`;
     const cell = (entry, field, strike, type) => {
-      const td = document.createElement('td'); if (!entry) { td.textContent = '—'; return td; }
+      const td = document.createElement('td');
       if (spotValid && (type === 'call' ? spot > strike : spot < strike)) td.classList.add('opt-in-money');
-      const button = document.createElement('button'); button.type = 'button'; button.textContent = display(entry.item[field], field === 'iv');
-      const label = field === 'iv' ? 'IV' : t(field); button.setAttribute('aria-label', `${type === 'call' ? t('call') : t('put')} ${fmt(strike)} · ${label}: ${button.textContent} · ${entry.item.symbol}`);
-      button.addEventListener('click', () => applyChainContract(entry.index)); td.appendChild(button); return td;
+      const price = display(entry?.item[field], field === 'iv');
+      const quantityKey = field === 'bid' ? 'bid_size' : field === 'ask' ? 'ask_size' : null;
+      const rawSize = quantityKey && entry?.item[quantityKey];
+      const quantity = rawSize === null || rawSize === undefined || rawSize === '' || !Number.isFinite(Number(rawSize)) || Number(rawSize) < 0 ? '—' : new Intl.NumberFormat(lang() ? 'en-US' : 'zh-CN', {maximumFractionDigits: 0}).format(Number(rawSize));
+      const content = document.createElement(entry ? 'button' : 'span');
+      content.className = 'opt-chain-quote'; if (entry) content.type = 'button';
+      const primary = document.createElement('span'); primary.className = 'opt-chain-price'; primary.textContent = price; content.appendChild(primary);
+      if (quantityKey) { const secondary = document.createElement('small'); secondary.className = 'opt-chain-size'; secondary.textContent = `${t(field === 'bid' ? 'bidSize' : 'askSize')} ${quantity}`; content.appendChild(secondary); }
+      if (entry) {
+        const label = field === 'iv' ? 'IV' : t(field);
+        content.setAttribute('aria-label', `${type === 'call' ? t('call') : t('put')} ${fmt(strike)} · ${label}: ${price}${quantityKey ? ` · ${t(field === 'bid' ? 'bidSize' : 'askSize')}: ${quantity}` : ''} · ${entry.item.symbol}`);
+        content.addEventListener('click', () => applyChainContract(entry.index));
+      }
+      td.appendChild(content); return td;
     };
     for (const strike of [...groups.keys()].sort((a,b) => a-b)) {
       const group = groups.get(strike), count = Math.max(group.call.length, group.put.length);
