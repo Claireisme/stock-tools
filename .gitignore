@@ -1,0 +1,8 @@
+.alpaca-config.json
+.alpaca-config-*
+__pycache__/
+*.py[cod]
+.DS_Store
+.openai/
+dist/
+contract_output/

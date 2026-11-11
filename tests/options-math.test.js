@@ -1,0 +1,17 @@
+const assert = require('node:assert/strict');
+const { price, profit, expiryAnalysis } = require('../options-math.js');
+const close = (actual, expected, tolerance = 0.01) => assert.ok(Math.abs(actual - expected) < tolerance, `${actual} != ${expected}`);
+const call = { type: 'call', side: 'buy', strike: 100, premium: 5, contracts: 1, expiry: '2027-01-01', volatility: 0.2 };
+close(price({ type: 'call', spot: 100, strike: 100, years: 1, volatility: 0.2, rate: 0.05 }), 10.4506);
+close(price({ type: 'put', spot: 100, strike: 100, years: 1, volatility: 0.2, rate: 0.05 }), 5.5735);
+close(price({ type: 'put', spot: 0, strike: 100, years: 0, volatility: 0.2 }), 100);
+close(profit({ legs: [call], spot: 120, date: '2027-01-01' }), 1500);
+close(profit({ legs: [call], spot: 80, date: '2027-01-01' }), -500);
+assert.deepEqual(expiryAnalysis({ legs: [call] }), { breakevens: [105], breakevenRanges: [], maxProfit: Infinity, maxLoss: 500 });
+const spread = [call, { ...call, side: 'sell', strike: 110, premium: 2 }];
+assert.deepEqual(expiryAnalysis({ legs: spread }), { breakevens: [103], breakevenRanges: [], maxProfit: 700, maxLoss: 300 });
+assert.deepEqual(expiryAnalysis({ legs: [{ ...call, side: 'sell' }] }), { breakevens: [105], breakevenRanges: [], maxProfit: 500, maxLoss: Infinity });
+assert.throws(() => profit({ legs: [call], spot: 100, date: '2027-01-02' }));
+assert.throws(() => expiryAnalysis({ legs: [call, { ...call, expiry: '2027-02-01' }] }));
+assert.throws(() => profit({ legs: [call], spot: 100, date: '2027-02-30' }));
+console.log('Option math tests passed');
