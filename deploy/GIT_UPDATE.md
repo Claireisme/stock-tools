@@ -1,29 +1,20 @@
 # GitHub 更新网站
 
-本说明仅适用于网站位于 `/www/wwwroot/stock-tools`、以 `stock-tools.service` 运行且监听本机 8001 端口的服务器。源码单独保存在 `/opt/stock-tools-source`，不要在网站目录中直接运行 `git pull`。请先确认服务已配置为开机启动并正在运行。
+适用于网站目录 `/www/wwwroot/stock-tools`、源码目录 `/opt/stock-tools-source`、网站监听本机 8001 的服务器。源码目录应是 `Claireisme/stock-tools` 的 main 分支，工作区没有未提交修改。
 
-首次配置：以 root 登录服务器，生成只用于此仓库的密钥。出现确认覆盖时不要覆盖已有密钥，应改用其他文件名。
+首次获取包含更新脚本的代码：
 
-```bash
-ssh-keygen -t ed25519 -f /root/.ssh/stock-tools-deploy -N ''
-cat /root/.ssh/stock-tools-deploy.pub
+```sh
+git -C /opt/stock-tools-source pull --ff-only origin main
+bash /opt/stock-tools-source/deploy/update-git.sh
 ```
 
-在 GitHub 仓库 Settings → Deploy keys 中添加显示的公钥，保持只读；不要上传没有 `.pub` 后缀的私钥。首次连接时确认 GitHub 主机指纹。然后克隆仓库（目录须不存在）：
+以后每次更新只需运行：
 
-```bash
-GIT_SSH_COMMAND='ssh -i /root/.ssh/stock-tools-deploy -o IdentitiesOnly=yes' git clone --branch main git@github.com:Claireisme/stock-tools.git /opt/stock-tools-source
+```sh
+bash /opt/stock-tools-source/deploy/update-git.sh
 ```
 
-以后每次以 root 登录后执行：
+脚本先拉取 GitHub main，再备份旧程序到 `/var/backups/` 并更新网站文件。不会覆盖 `.alpaca-config.json`、Nginx 或宝塔配置；更新后检查本机 8001，失败时尝试恢复旧文件。静态页面文件更新不重启服务。
 
-```bash
-GIT_SSH_COMMAND='ssh -i /root/.ssh/stock-tools-deploy -o IdentitiesOnly=yes' git -C /opt/stock-tools-source pull --ff-only origin main && bash /opt/stock-tools-source/deploy/apply-git.sh
-```
-
-脚本检查服务、备份旧网站文件、复制网站文件并重启服务，然后检查中文页面。检查失败时会尝试恢复备份；备份保存在 `/var/backups/`。不会修改 `.alpaca-config.json`、`.htaccess`、Nginx 或 systemd 配置。若失败，按提示检查服务：
-
-```bash
-systemctl status stock-tools --no-pager
-journalctl -u stock-tools -n 50 --no-pager
-```
+当 `server.py` 有变化时，脚本只会重启一个已运行的独立 `stock-tools.service`，且其工作目录、启动程序和 8001 监听必须与项目一致。否则脚本在修改网站前停止，请先在宝塔中为本项目配置可单独重启的服务；脚本不会重启整个宝塔。已拉取的源码会保留，服务配置好后再次运行更新命令即可。
