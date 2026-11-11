@@ -8,7 +8,7 @@
   <script>document.documentElement.classList.add("loading-language");</script>
   <style>.loading-language body { visibility: hidden; }</style>
   <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/options.css?v=20261111-chain-loading">
+  <link rel="stylesheet" href="/options.css?v=20261111-stock-suggest">
 </head>
 <body>
   <header class="topbar"><div class="topbar-inner">
@@ -44,7 +44,7 @@
       <div class="breadcrumbs"><a href="#home" data-opt="home">首页</a><span>›</span><span data-opt="nav">期权工具</span><span>›</span><strong data-opt="title">期权收益计算器</strong></div>
       <div class="calculator-heading"><div class="calculator-icon" aria-hidden="true">∿</div><div><p class="eyebrow">OPTIONS TOOLS / 02</p><h1 data-opt="title">期权收益计算器</h1><p data-opt="intro">输入期权头寸，查看不同股价和日期的预估盈亏。</p></div></div>
       <section class="options-card option-market" aria-label="Option chain">
-        <div class="option-lookup"><div class="options-section-head"><div><h3 data-opt="lookupTitle">股票与期权行情</h3><p data-opt="lookupHelp">搜索美股并选择到期日，为每个头寸选择合约。也可以手动输入。</p></div></div><div class="options-lookup-row"><label><span data-opt="ticker">股票名称或代码</span><input id="opt-symbol" type="text" autocomplete="off" maxlength="32" placeholder="AAPL"></label><button type="button" id="opt-search" class="options-secondary" data-opt="search">搜索股票</button></div><div id="opt-stock-results" class="options-stock-results" hidden></div><div class="options-lookup-row"><label><span data-opt="chooseExpiry">期权到期日</span><select id="opt-expirations" disabled><option value="" data-opt="chooseStock">请先选择股票</option></select></label><button type="button" id="opt-refresh" class="options-secondary" data-opt="refresh" disabled>刷新期权链</button></div><p id="opt-lookup-status" class="options-lookup-status" role="status" aria-live="polite"></p><p id="opt-quote-note" class="options-lookup-note" data-opt="quoteNote">Alpaca Indicative 提供经过调整的参考报价，并非实际 OPRA 报价；成交数据延迟 15 分钟，非实时可交易报价。价格和隐含波动率均可修改。</p></div>
+        <div class="option-lookup"><div class="options-section-head"><div><h3 data-opt="lookupTitle">股票与期权行情</h3><p data-opt="lookupHelp">搜索美股并选择到期日，为每个头寸选择合约。也可以手动输入。</p></div></div><div class="options-lookup-row"><div class="options-symbol-field"><label for="opt-symbol" data-opt="ticker">股票名称或代码</label><div class="options-search-wrap"><input id="opt-symbol" type="text" autocomplete="off" maxlength="32" placeholder="AAPL" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="opt-stock-results"><div id="opt-stock-results" class="options-stock-results" role="listbox" hidden></div></div></div><button type="button" id="opt-search" class="options-secondary" data-opt="search">搜索股票</button></div><div class="options-lookup-row"><label><span data-opt="chooseExpiry">期权到期日</span><select id="opt-expirations" disabled><option value="" data-opt="chooseStock">请先选择股票</option></select></label><button type="button" id="opt-refresh" class="options-secondary" data-opt="refresh" disabled>刷新期权链</button></div><p id="opt-lookup-status" class="options-lookup-status" role="status" aria-live="polite"></p><p id="opt-quote-note" class="options-lookup-note" data-opt="quoteNote">Alpaca Indicative 提供经过调整的参考报价，并非实际 OPRA 报价；成交数据延迟 15 分钟，非实时可交易报价。价格和隐含波动率均可修改。</p></div>
         <div id="opt-chain-panel" class="opt-chain-panel" hidden><div class="options-section-head opt-chain-head"><div><h2 data-opt="chainTitle">期权链</h2><p data-opt="chainHelp">点击任一报价，填入所选头寸。无行情显示为 —。</p></div><div class="opt-chain-controls"><label><span data-opt="applyTo">填入头寸</span><select id="opt-chain-target"></select></label><label><span data-opt="direction">方向</span><select id="opt-chain-side"><option value="buy" data-opt="buy">买入</option><option value="sell" data-opt="sell">卖出</option></select></label></div></div><p id="opt-chain-selection" class="options-lookup-status" role="status" aria-live="polite"></p><div id="opt-expiry-tabs" class="opt-expiry-tabs" aria-label="Expiration dates"></div><div class="opt-chain-scroll"><table class="opt-chain-table"><thead><tr class="opt-chain-groups"><th colspan="4" scope="colgroup" data-opt="call">看涨 Call</th><th rowspan="2" scope="col" data-opt="strike">行权价</th><th colspan="4" scope="colgroup" data-opt="put">看跌 Put</th></tr><tr><th scope="col" data-opt="bid">买价</th><th scope="col" data-opt="ask">卖价</th><th scope="col" data-opt="last">最新价</th><th scope="col">IV</th><th scope="col" data-opt="bid">买价</th><th scope="col" data-opt="ask">卖价</th><th scope="col" data-opt="last">最新价</th><th scope="col">IV</th></tr></thead><tbody id="opt-chain-body"></tbody></table></div></div>
       </section>
       <div class="options-layout"><form id="options-form" class="options-card" novalidate><div class="options-section-head"><div><span class="step-number">01 / POSITION</span><h2 data-opt="position">设置持仓</h2></div></div>
@@ -60,7 +60,7 @@
   <footer><div><a class="footer-brand" href="#home">数值工具箱</a><span>为日常计算，留一处简单。</span></div><p>MAKE NUMBERS MAKE SENSE <span>© 2026</span></p></footer>
   <script src="/app.js"></script>
   <script src="/options-math.js"></script>
-  <script src="/options.js?v=20261111-chain-loading"></script>
+  <script src="/options.js?v=20261111-stock-suggest"></script>
   <script>document.documentElement.classList.remove("loading-language");</script>
 </body>
 </html>

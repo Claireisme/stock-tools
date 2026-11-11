@@ -33,6 +33,25 @@
   function clear() { lastResult = null; ['opt-cost','opt-max-profit','opt-max-loss','opt-breakeven'].forEach(id => $(id).textContent = '—'); $('opt-chart').innerHTML = ''; $('opt-table').innerHTML = ''; $('opt-error').textContent = ''; }
   function reset() { resetLookup(); $('opt-spot').value = 100; $('opt-expiry').value = dateString(day(today()) + 30 * 86400000); $('opt-rate').value = 4; $('opt-dividend').value = 0; $('opt-shares').value = 0; $('opt-entry').value = 100; $('opt-low').value = 50; $('opt-high').value = 150; legsContainer.innerHTML = ''; addLeg(); clear(); }
   let lookupGeneration = 0, selectedStock = null, selectedStockName = '', chain = [], chainState = 'hidden', stockAuto = {}, stockRevision = {}, lookupStatus = {key:'', detail:''}, pendingChainCenter = false;
+  let searchTimer, searchSerial = 0, searchOptions = [], activeSearchOption = -1, composing = false;
+  const symbolInput = $('opt-symbol'), stockResults = $('opt-stock-results');
+  function dismissSuggestions() {
+    clearTimeout(searchTimer); searchSerial++; searchOptions = []; activeSearchOption = -1;
+    stockResults.replaceChildren(); stockResults.hidden = true;
+    symbolInput.setAttribute('aria-expanded', 'false'); symbolInput.removeAttribute('aria-activedescendant');
+  }
+  function setActiveSuggestion(index) {
+    if (!searchOptions.length) return;
+    activeSearchOption = (index + searchOptions.length) % searchOptions.length;
+    [...stockResults.children].forEach((node, i) => node.setAttribute('aria-selected', String(i === activeSearchOption)));
+    const active = stockResults.children[activeSearchOption];
+    symbolInput.setAttribute('aria-activedescendant', active.id);
+    active.scrollIntoView({block:'nearest'});
+  }
+  function scheduleStockSearch() {
+    clearTimeout(searchTimer);
+    if (symbolInput.value.trim()) searchTimer = setTimeout(() => searchStocks(true), 300);
+  }
   function clearAutoStock() { for (const id of Object.keys(stockAuto)) if (stockAuto[id]) $(id).value = ''; stockAuto = {}; }
   function setLookupStatus(key, detail = '') { lookupStatus = {key, detail}; renderLookupStatus(); }
   function renderLookupStatus() { $('opt-lookup-status').textContent = [lookupStatus.key ? t(lookupStatus.key) : '', lookupStatus.detail].filter(Boolean).join(' · '); }
@@ -143,7 +162,7 @@
   function clearChainData() { pendingChainCenter = false; chain = []; $('opt-chain-selection').textContent = ''; [...legsContainer.children].forEach(leg => { clearAutoFields(leg); populateContracts(leg); }); clear(); }
   function clearChain() { clearChainData(); chainState = 'hidden'; $('opt-chain-panel').querySelector('.opt-chain-scroll').style.minHeight = ''; $('opt-chain-panel').hidden = true; $('opt-chain-body').replaceChildren(); }
   function resetLookup() {
-    lookupGeneration++; selectedStock = null; clearChain(); stockAuto = {}; $('opt-symbol').value = ''; $('opt-stock-results').replaceChildren(); $('opt-stock-results').hidden = true;
+    lookupGeneration++; selectedStock = null; clearChain(); stockAuto = {}; symbolInput.value = ''; dismissSuggestions();
     $('opt-expiry-tabs').replaceChildren(); const select = $('opt-expirations'); select.replaceChildren(); const option = document.createElement('option'); option.value = ''; option.dataset.opt = 'chooseStock'; option.textContent = t('chooseStock'); select.appendChild(option); select.disabled = true; $('opt-refresh').disabled = true; setLookupStatus('');
   }
   function configurationKey(error) { return /missing|credential|token/i.test(error.code || '') || /TRADIER_API_TOKEN|ALPACA_API_KEY/.test(error.message || '') ? 'configureAlpaca' : 'chainFailed'; }
@@ -153,20 +172,22 @@
     if (!response.ok || data.error) { const error = new Error(data.error || 'request'); error.code = data.code; throw error; }
     return data;
   }
-  async function searchStocks() {
-    const query = $('opt-symbol').value.trim(); const generation = ++lookupGeneration;
-    selectedStock = null; clearAutoStock(); clearChain(); $('opt-expirations').disabled = true; $('opt-refresh').disabled = true; $('opt-stock-results').replaceChildren(); $('opt-stock-results').hidden = true;
-    if (!query) { setLookupStatus('emptyTicker'); return; }
+  async function searchStocks(automatic = false) {
+    const query = symbolInput.value.trim();
+    dismissSuggestions();
+    const generation = ++lookupGeneration, serial = searchSerial;
+    selectedStock = null; clearAutoStock(); clearChain(); $('opt-expirations').disabled = true; $('opt-refresh').disabled = true;
+    if (!query) { if (!automatic) setLookupStatus('emptyTicker'); return; }
     setLookupStatus('loading');
     try {
-      const data = await getJSON('/api/search', {q:query, market:'us', source:'sina'}); if (generation !== lookupGeneration) return;
-      const results = Array.isArray(data.results) ? data.results.filter(item => item.market === 'us' && item.code && item.name) : [];
-      for (const item of results) { const button = document.createElement('button'); button.type = 'button'; button.textContent = stockLabel(item); button.addEventListener('click', () => selectStock(item)); $('opt-stock-results').appendChild(button); }
-      $('opt-stock-results').hidden = !results.length; setLookupStatus(results.length ? 'chooseResult' : 'noStocks');
-    } catch (_) { if (generation === lookupGeneration) setLookupStatus('searchFailed'); }
+      const data = await getJSON('/api/search', {q:query, market:'us', source:'sina'}); if (generation !== lookupGeneration || serial !== searchSerial) return;
+      searchOptions = Array.isArray(data.results) ? data.results.filter(item => item.market === 'us' && item.code && item.name) : [];
+      searchOptions.forEach((item, index) => { const button = document.createElement('button'); button.type = 'button'; button.id = `opt-stock-option-${index}`; button.setAttribute('role', 'option'); button.setAttribute('aria-selected', 'false'); button.tabIndex = -1; button.textContent = stockLabel(item); button.addEventListener('mousedown', event => event.preventDefault()); button.addEventListener('click', () => selectStock(item)); stockResults.appendChild(button); });
+      stockResults.hidden = !searchOptions.length; symbolInput.setAttribute('aria-expanded', String(Boolean(searchOptions.length))); setLookupStatus(searchOptions.length ? 'chooseResult' : 'noStocks');
+    } catch (_) { if (generation === lookupGeneration && serial === searchSerial) setLookupStatus('searchFailed'); }
   }
   async function selectStock(item) {
-    const generation = ++lookupGeneration; selectedStock = item.code; selectedStockName = item.name; clearAutoStock(); clearChain(); $('opt-symbol').value = stockLabel(item); $('opt-stock-results').hidden = true; $('opt-stock-results').replaceChildren(); $('opt-expirations').disabled = true; $('opt-refresh').disabled = true; setLookupStatus('loading');
+    dismissSuggestions(); const generation = ++lookupGeneration; selectedStock = item.code; selectedStockName = item.name; clearAutoStock(); clearChain(); symbolInput.value = stockLabel(item); $('opt-expirations').disabled = true; $('opt-refresh').disabled = true; setLookupStatus('loading');
     const before = Object.fromEntries(['opt-spot','opt-entry','opt-low','opt-high'].map(id => [id, stockRevision[id] || 0]));
     const [expirations, quote] = await Promise.allSettled([getJSON('/api/options/expirations', {symbol:item.code, source:'alpaca'}), getJSON('/api/quote', {market:'us', code:item.code, source:'sina'})]);
     if (generation !== lookupGeneration) return;
@@ -282,9 +303,19 @@
     });
     $('opt-table').innerHTML = `<thead><tr><th>${t('price')}</th>${dates.map(date => `<th>${date}</th>`).join('')}</tr></thead><tbody>${values.slice().reverse().map(row => `<tr><th>${fmt(row.spot)}</th>${row.profits.map(value => `<td class="${value >= 0 ? 'profit' : 'loss'}">${signed(value)}</td>`).join('')}</tr>`).join('')}</tbody>`;
   }
-  $('opt-search').addEventListener('click', searchStocks);
-  $('opt-symbol').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); searchStocks(); } });
-  $('opt-symbol').addEventListener('input', () => { lookupGeneration++; selectedStock = null; clearAutoStock(); clearChain(); $('opt-expirations').disabled = true; $('opt-refresh').disabled = true; $('opt-stock-results').replaceChildren(); $('opt-stock-results').hidden = true; setLookupStatus(''); });
+  $('opt-search').addEventListener('click', () => searchStocks());
+  symbolInput.addEventListener('keydown', event => {
+    if (event.isComposing || composing) return;
+    if (event.key === 'ArrowDown' && searchOptions.length) { event.preventDefault(); setActiveSuggestion(activeSearchOption + 1); }
+    else if (event.key === 'ArrowUp' && searchOptions.length) { event.preventDefault(); setActiveSuggestion(activeSearchOption < 0 ? searchOptions.length - 1 : activeSearchOption - 1); }
+    else if (event.key === 'Enter') { event.preventDefault(); if (activeSearchOption >= 0 && searchOptions[activeSearchOption]) selectStock(searchOptions[activeSearchOption]); else searchStocks(); }
+    else if (event.key === 'Escape') { dismissSuggestions(); setLookupStatus(''); }
+  });
+  symbolInput.addEventListener('input', () => { lookupGeneration++; selectedStock = null; clearAutoStock(); clearChain(); $('opt-expirations').disabled = true; $('opt-refresh').disabled = true; dismissSuggestions(); setLookupStatus(''); if (!composing) scheduleStockSearch(); });
+  symbolInput.addEventListener('compositionstart', () => { composing = true; dismissSuggestions(); });
+  symbolInput.addEventListener('compositionend', () => { composing = false; scheduleStockSearch(); });
+  symbolInput.addEventListener('blur', event => { if (event.relatedTarget !== $('opt-search') && !stockResults.contains(event.relatedTarget)) dismissSuggestions(); });
+  document.addEventListener('pointerdown', event => { if (event.target !== symbolInput && !$('opt-search').contains(event.target) && !stockResults.contains(event.target)) dismissSuggestions(); });
   $('opt-expirations').addEventListener('change', () => loadChain());
   window.addEventListener('hashchange', () => { if (location.hash === '#options' && pendingChainCenter) centerChain(); });
   $('opt-refresh').addEventListener('click', () => loadChain());
