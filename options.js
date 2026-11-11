@@ -68,6 +68,12 @@
     }
     container.scrollLeft = previousScrollLeft;
   }
+  function updateExpirySelection() {
+    const selected = $('opt-expirations').value;
+    for (const button of $('opt-expiry-tabs').children) {
+      button.setAttribute('aria-pressed', String(button.firstElementChild.textContent === selected));
+    }
+  }
   function renderChain() {
     const body = $('opt-chain-body'), scroll = $('opt-chain-panel').querySelector('.opt-chain-scroll'), previousScrollTop = scroll.scrollTop;
     body.replaceChildren();
@@ -134,7 +140,8 @@
     $('opt-chain-target').value = 'new';
   }
   function clearAutoFields(leg) { for (const field of ['strike', 'premium', 'volatility']) if (leg._auto && leg._auto[field]) leg.querySelector(`.leg-${field}`).value = ''; leg._auto = {}; }
-  function clearChain() { pendingChainCenter = false; chain = []; chainState = 'hidden'; $('opt-chain-panel').querySelector('.opt-chain-scroll').style.minHeight = ''; $('opt-chain-panel').hidden = true; $('opt-chain-body').replaceChildren(); $('opt-chain-selection').textContent = '';  [...legsContainer.children].forEach(leg => { clearAutoFields(leg); populateContracts(leg); }); clear(); }
+  function clearChainData() { pendingChainCenter = false; chain = []; $('opt-chain-selection').textContent = ''; [...legsContainer.children].forEach(leg => { clearAutoFields(leg); populateContracts(leg); }); clear(); }
+  function clearChain() { clearChainData(); chainState = 'hidden'; $('opt-chain-panel').querySelector('.opt-chain-scroll').style.minHeight = ''; $('opt-chain-panel').hidden = true; $('opt-chain-body').replaceChildren(); }
   function resetLookup() {
     lookupGeneration++; selectedStock = null; clearChain(); stockAuto = {}; $('opt-symbol').value = ''; $('opt-stock-results').replaceChildren(); $('opt-stock-results').hidden = true;
     $('opt-expiry-tabs').replaceChildren(); const select = $('opt-expirations'); select.replaceChildren(); const option = document.createElement('option'); option.value = ''; option.dataset.opt = 'chooseStock'; option.textContent = t('chooseStock'); select.appendChild(option); select.disabled = true; $('opt-refresh').disabled = true; setLookupStatus('');
@@ -179,7 +186,10 @@
   }
   async function loadChain(stockNote = '') {
     if (!selectedStock || !$('opt-expirations').value) return;
-    const generation = ++lookupGeneration, expiration = $('opt-expirations').value, symbol = selectedStock, scroll = $('opt-chain-panel').querySelector('.opt-chain-scroll'), oldHeight = scroll.clientHeight; clearChain(); if (oldHeight) scroll.style.minHeight = `${oldHeight}px`; chainState = 'loading'; renderExpiryTabs(); renderChain(); $('opt-expiry').value = expiration; clear(); setLookupStatus('loading');
+    const generation = ++lookupGeneration, expiration = $('opt-expirations').value, symbol = selectedStock, scroll = $('opt-chain-panel').querySelector('.opt-chain-scroll'), oldHeight = scroll.clientHeight;
+    clearChainData();
+    if (oldHeight) scroll.style.minHeight = `${oldHeight}px`;
+    chainState = 'loading'; updateExpirySelection(); renderChain(); $('opt-expiry').value = expiration; setLookupStatus('loading');
     try {
       const data = await getJSON('/api/options/chain', {symbol, expiration, source:'alpaca'}); if (generation !== lookupGeneration) return;
       chain = (Array.isArray(data.options) ? data.options : []).filter(item => item && ['call','put'].includes(item.type) && Number.isFinite(Number(item.strike)) && Number(item.strike) > 0 && item.symbol);
