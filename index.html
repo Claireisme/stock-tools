@@ -9,7 +9,7 @@
   <style>.loading-language body { visibility: hidden; }</style>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/options.css?v=20261111-sticky-results">
-  <link rel="stylesheet" href="/investors.css">
+  <link rel="stylesheet" href="/investors.css?v=timezone-1">
 </head>
 <body>
   <header class="topbar"><div class="topbar-inner">
@@ -64,6 +64,7 @@
       <div class="calculator-heading"><div class="calculator-icon" aria-hidden="true">◎</div><div><p class="eyebrow">DISCLOSURE WATCH / 03</p><h1 data-investor="title">投资者披露追踪</h1><p data-investor="intro">查看基金交易、内幕交易和公开持仓披露。</p></div></div>
       <div class="investor-note" data-investor="note">披露有延迟，并不等同于实时交易。ARK 是基金交易；13F 是季度末持仓快照；国会披露金额通常为区间，交易人可能是家庭成员。</div>
       <div class="investor-toolbar"><button id="investor-refresh" class="primary-button" type="button" data-investor="refresh">检查更新</button><button id="investor-alerts" class="options-secondary" type="button">启用浏览器提醒</button><span id="investor-status" role="status" aria-live="polite"></span></div><p id="investor-alert-status" role="status" class="investor-alert-status"></p>
+      <div class="investor-timezone-row" id="investor-timezone-control"></div>
       <div class="investor-sources" id="investor-sources"></div>
       <div class="options-card investor-section"><div class="options-section-head"><div><span class="step-number">01 / DISCLOSURES</span><h2 data-investor="events">披露事件</h2></div></div><div class="investor-filters"><label><span data-investor="source">来源</span><select id="investor-source"><option value="" data-investor="all">全部</option><option value="form4">Form 4</option><option value="ark_daily">ARK</option><option value="congress">PTR</option><option value="13f">13F</option><option value="13d">13D</option></select></label><label><span data-investor="search">搜索人物或代码</span><input id="investor-search" type="search" placeholder="姓名 / ticker"></label></div><div id="investor-events" aria-live="polite"></div></div>
       <div class="options-card investor-section"><div class="options-section-head"><div><span class="step-number">02 / WATCHLIST</span><h2 data-investor="roster">关注名单</h2><p data-investor="identity">未核验唯一标识的对象不会按姓名自动匹配。</p></div></div><div id="investor-roster"></div></div>
@@ -76,10 +77,10 @@
     <div class="footer-credits"><p class="footer-copyright">© 2026 Respect LLC</p><p>设计与开发 <span aria-hidden="true">·</span> Eastwood Management Services Limited</p></div>
   </footer>
   <script src="/app.js"></script>
-  <script src="/investors.js"></script>
+  <script src="/investors.js?v=timezone-1"></script>
   <script src="/ark-position-chart.js"></script>
   <script src="/ark-holdings.js"></script>
-  <script src="/investor-profile.js"></script>
+  <script src="/investor-profile.js?v=timezone-1"></script>
   <script src="/options-math.js"></script>
   <script src="/options.js?v=20261111-expiry-controls"></script>
   <script>document.documentElement.classList.remove("loading-language");</script>

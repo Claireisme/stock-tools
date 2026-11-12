@@ -5,7 +5,7 @@
   const t = (zh, english) => en ? english : zh;
   const el = (tag, value, cls) => { const node = document.createElement(tag); if (value != null) node.textContent = value; if (cls) node.className = cls; return node; };
   const n = value => value == null ? '—' : new Intl.NumberFormat(en ? 'en-US' : 'zh-CN', {maximumFractionDigits: 2}).format(value);
-  let current = '', filter = {}, offset = 0, requestId = 0;
+  let current = '', filter = {}, offset = 0, requestId = 0, lastData = null;
   function details(event) { try { return typeof event.details === 'string' ? JSON.parse(event.details) : event.details || {}; } catch (_) { return {}; } }
   function cleanAsset(value) {
     return String(value).replace(/\s*\[(?:ST|OP|GS|MF|EF|AB|CS|CT)\]\s*$/, '').trim();
@@ -46,8 +46,7 @@
     return ({SP:t('配偶','Spouse'), DC:t('受抚养子女','Dependent child'), JT:t('共同持有','Jointly held')})[value] || t('未能确认，请查看原文','Not confirmed; see filing');
   }
   function formatObserved(value) {
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? String(value) : date.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+    return window.InvestorTimeZone.format(value);
   }
   function sourceLink(url) { try { const u = new URL(url); if (u.protocol !== 'https:') return null; const a = el('a', t('查看原文 ↗', 'Source ↗')); a.href = u.href; a.target = '_blank'; a.rel = 'noopener noreferrer'; return a; } catch (_) { return null; } }
   function card(label, value, note) { const box = el('div', null, 'profile-metric'); box.append(el('span', label), el('strong', value)); if (note) box.append(el('small', note)); return box; }
@@ -68,6 +67,7 @@
     root.append(el('div', note, 'investor-note'));
     const controls = el('div', null, 'profile-controls');
     controls.append(select(t('年份','Year'), 'year', [['',t('全部年份','All years')], ...(data.filters.years || []).map(y => [String(y),String(y)])], filter.year), select(t('方向','Direction'),'side', [['',t('全部方向','All directions')],['buy',t('买入 / 增仓','Buy / increase')],['sell',t('卖出 / 减仓','Sell / decrease')],['other',t('其他','Other')]], filter.side));
+    controls.append(window.InvestorTimeZone.createControl());
     if ((data.filters.funds || []).length) controls.append(select(t('基金','Fund'),'fund', [['',t('全部基金','All funds')], ...data.filters.funds.map(f => [f,f])], filter.fund));
     const search = el('form', null, 'profile-search'); const searchLabel = el('label'); searchLabel.append(el('span',t('标的搜索','Security search'))); const searchInput = el('input'); searchInput.type = 'search'; searchInput.placeholder = t('代码 / 名称 / CUSIP','Ticker / name / CUSIP'); searchInput.value = filter.q || ''; searchLabel.append(searchInput); const searchButton = el('button', t('搜索','Search'), 'options-secondary'); searchButton.type = 'submit'; search.append(searchLabel,searchButton); search.addEventListener('submit', event => { event.preventDefault(); filter.q = searchInput.value.trim(); offset = 0; load(); }); controls.append(search);
     root.append(controls);
@@ -124,8 +124,8 @@
         }
       }
       if (d.percent_of_etf != null && e.source === 'ark') parts.push(`${t('交易金额占基金比重','Trade as % of fund')}：${d.percent_of_etf}%`);
-      if (e.transaction_date) parts.push(`${t('交易日期','Transaction date')}：${e.transaction_date}`);
-      if (e.reported_at) parts.push(`${t('披露日期','Disclosure date')}：${e.reported_at}`);
+      if (e.transaction_date) parts.push(`${t('交易日期','Transaction date')}：${formatObserved(e.transaction_date)}`);
+      if (e.reported_at) parts.push(`${t('披露日期','Disclosure date')}：${formatObserved(e.reported_at)}`);
       if (d.disclosure_delay_days != null) parts.push(t(`交易后 ${d.disclosure_delay_days} 天披露`, `Disclosed ${d.disclosure_delay_days} days after the transaction`));
       if (e.observed_at) parts.push(`${t('数据收录','Collected')}：${formatObserved(e.observed_at)}`);
       row.append(el('p',parts.join(' · ')));
@@ -136,7 +136,8 @@
     }
     const nav = el('div',null,'profile-pagination'); const prev = el('button',t('上一页','Previous'),'options-secondary'); prev.disabled = pages.offset === 0; prev.onclick = () => { offset = Math.max(0,pages.offset-pages.limit); load(); }; const next = el('button',t('下一页','Next'),'options-secondary'); next.disabled = pages.offset+pages.limit >= pages.total; next.onclick = () => { offset = pages.offset+pages.limit; load(); }; nav.append(prev, el('span', `${pages.total ? pages.offset+1 : 0}–${Math.min(pages.offset+pages.limit,pages.total)} / ${pages.total}`), next); table.append(nav); root.append(table);
   }
-  async function load() { const id = ++requestId; try { const params = new URLSearchParams({id:current,offset:String(offset),limit:'30'}); for (const [key,value] of Object.entries(filter)) if (value) params.set(key,value); const response = await fetch('/api/investors/profile?' + params); const data = await response.json(); if (id !== requestId) return; if (!response.ok) throw new Error(data.error || response.status); render(data); } catch (error) { if (id !== requestId) return; root.replaceChildren(); const back = el('a',t('← 返回关注名单','← Back to watchlist')); back.href='#investors'; root.append(back,el('p',t('无法加载详情：','Could not load details: ') + error.message)); } }
-  function route() { const match = location.hash.match(/^#investors\/([^/]+)$/); dashboard.hidden = !!match; root.hidden = !match; if (!match) { current=''; return; } let id; try { id=decodeURIComponent(match[1]); } catch (_) { id=''; } if (id !== current) { current=id; filter={}; offset=0; root.replaceChildren(el('p',t('正在加载详情…','Loading details…'))); load(); } }
+  async function load() { const id = ++requestId; try { const params = new URLSearchParams({id:current,offset:String(offset),limit:'30'}); for (const [key,value] of Object.entries(filter)) if (value) params.set(key,value); const response = await fetch('/api/investors/profile?' + params); const data = await response.json(); if (id !== requestId) return; if (!response.ok) throw new Error(data.error || response.status); lastData = data; render(data); } catch (error) { if (id !== requestId) return; root.replaceChildren(); const back = el('a',t('← 返回关注名单','← Back to watchlist')); back.href='#investors'; root.append(back,el('p',t('无法加载详情：','Could not load details: ') + error.message)); } }
+  function route() { const match = location.hash.match(/^#investors\/([^/]+)$/); dashboard.hidden = !!match; root.hidden = !match; if (!match) { current=''; lastData=null; requestId++; return; } let id; try { id=decodeURIComponent(match[1]); } catch (_) { id=''; } if (id !== current) { current=id; lastData=null; filter={}; offset=0; root.replaceChildren(el('p',t('正在加载详情…','Loading details…'))); load(); } }
+  window.addEventListener('investor-timezone-change', () => { if (current && lastData) render(lastData); });
   window.addEventListener('hashchange',route); route();
 })();
