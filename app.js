@@ -57,9 +57,11 @@
   function route() {
     const isCalculator = location.hash === '#price';
     const isOptions = location.hash === '#options';
-    home.hidden = isCalculator || isOptions;
+    const isInvestors = location.hash === '#investors' || location.hash.startsWith('#investors/');
+    home.hidden = isCalculator || isOptions || isInvestors;
     calculator.hidden = !isCalculator;
     $('options-view').hidden = !isOptions;
+    $('investors-view').hidden = !isInvestors;
     document.title = language === 'en' ? (isOptions ? 'Options Profit Calculator · Number Toolkit' : isCalculator ? 'Stock Price Change Calculator · Number Toolkit' : 'Number Toolkit') : (isOptions ? '期权收益计算器 · 数值工具箱' : isCalculator ? '股价涨跌幅计算器 · 数值工具箱' : '数值工具箱 · 让计算简单一点');
     if (location.hash !== '#tools') window.scrollTo(0, 0);
   }

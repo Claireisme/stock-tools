@@ -9,11 +9,12 @@
   <style>.loading-language body { visibility: hidden; }</style>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/options.css?v=20261111-sticky-results">
+  <link rel="stylesheet" href="/investors.css">
 </head>
 <body>
   <header class="topbar"><div class="topbar-inner">
     <a class="brand" href="#home" aria-label="数值工具箱首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>数值工具箱</span></a>
-    <nav aria-label="主导航"><a href="#home">工具导航</a><a href="#price">股票工具</a><a href="#options" data-opt="nav">期权工具</a></nav>
+    <nav aria-label="主导航"><a href="#home">工具导航</a><a href="#price">股票工具</a><a href="#options" data-opt="nav">期权工具</a><a href="#investors" data-investor="nav">持仓追踪</a></nav>
     <span class="header-note"><span></span> 简单计算，清晰决策</span><label class="language-control"><span class="sr-only">Language</span><select id="language" aria-label="Language"><option value="en">English</option><option value="zh">Chinese</option></select></label>
   </div></header>
   <main>
@@ -24,6 +25,7 @@
       <div class="section-heading" id="tools"><div><p class="eyebrow">EXPLORE THE TOOLS</p><h2>工具导航</h2><p>选择一个工具，开始简单计算。</p></div><span class="section-count">01 <small>/ 持续更新</small></span></div>
       <a class="featured-tool" href="#price"><div class="featured-icon" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M20 75V56h12v19M44 75V42h12v33M68 75V24h12v51M19 45l22-14 16 7 24-21"/><path d="M73 17h8v8"/></svg></div><div class="featured-copy"><span class="badge">股票工具</span><h3>股价涨跌幅计算器</h3><p>搜索股票，计算价格变化的百分比，或根据涨跌幅推算目标价。</p><span class="featured-link">打开工具 <span>→</span></span></div><div class="featured-preview" aria-hidden="true"><span>计算示例</span><div><span>当前价格</span><b>100.00</b></div><div><span>目标价格</span><b>110.00</b></div><div><span>涨跌幅</span><strong>+10.00%</strong></div></div></a>
       <a class="featured-tool options-home" href="#options"><div class="featured-icon options-feature-icon" aria-hidden="true">∿</div><div class="featured-copy"><span class="badge" data-opt="nav">期权工具</span><h3 data-opt="title">期权收益计算器</h3><p data-opt="homeDescription">组合多个期权头寸，探索不同价格和日期下的盈亏。</p><span class="featured-link"><span data-opt="open">打开工具</span> →</span></div><div class="featured-preview" aria-hidden="true"><span>OPTIONS / 02</span><div><span>CALL</span><b>＋</b></div><div><span>PUT</span><b>−</b></div><div><span>P / L</span><strong>↗</strong></div></div></a>
+      <a class="featured-tool investor-home" href="#investors"><div class="featured-icon investor-feature-icon" aria-hidden="true"><svg viewBox="0 0 128 128" fill="none"><rect x="22" y="27" width="70" height="66" rx="10" fill="white" stroke="#BDD0F5" stroke-width="2"/><path d="M36 75V62M49 75V51M62 75V57M75 75V42" stroke="#3971E8" stroke-width="6" stroke-linecap="round"/><path d="M96 65a20 20 0 1 0 0 40 20 20 0 0 0 0-40Z" fill="#EDF4FF" stroke="#8AAEF0" stroke-width="2"/><path d="M96 74v12l8 5" stroke="#2864DF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="89" cy="32" r="5" fill="#85ABFA"/></svg></div><div class="featured-copy"><span class="badge" data-investor="nav">持仓追踪</span><h3 data-investor="title">投资者披露追踪</h3><p data-investor="intro">查看基金交易、内幕交易和公开持仓披露。</p><span class="featured-link" data-investor="open">打开工具 →</span></div><div class="featured-preview investor-feature-preview" aria-hidden="true"><span>DISCLOSURE WATCH / 03</span><div><span>ARK</span><b>ETF</b></div><div><span>FORM 4</span><b>SEC</b></div><div><span>13F</span><strong>↗</strong></div></div></a>
       <div class="section-heading secondary-heading"><div><h2>更多工具</h2><p>更多实用工具，持续收录中。</p></div><span class="section-count">COMING SOON</span></div>
       <div class="tool-grid"><div class="coming-card"><span class="coming-icon">＋</span><div><h3>更多工具</h3><p>新的工具正在规划中，敬请期待。</p></div><span class="coming-label">即将推出</span></div></div>
     </section>
@@ -56,12 +58,28 @@
       </form><div class="options-card options-results"><div class="options-section-head"><div><span class="step-number">02 / RESULTS</span><h2 data-opt="result">到期收益分析</h2></div><span class="card-heading-icon">↗</span></div><div class="options-metrics" aria-live="polite"><div><span data-opt="cost">期权净支出</span><strong id="opt-cost">—</strong></div><div><span data-opt="maxProfit">最大收益</span><strong id="opt-max-profit">—</strong></div><div><span data-opt="maxLoss">最大亏损</span><strong id="opt-max-loss">—</strong></div><div><span data-opt="breakEven">到期盈亏平衡价</span><strong id="opt-breakeven">—</strong></div></div><div class="options-chart-header"><h3 data-opt="chart">到期损益曲线</h3><span data-opt="chartHint">横轴：股价 · 纵轴：盈亏</span></div><div id="opt-chart" class="options-chart"></div><p class="options-note" data-opt="disclaimer">期权价格为手动输入。到期前估值采用 Black–Scholes 模型，假设隐含波动率不变；未计手续费、买卖价差、提前行权及税费。结果仅供参考。</p></div></div>
       <div class="options-card options-table-card"><div class="options-section-head"><div><span class="step-number">03 / SCENARIOS</span><h2 data-opt="scenarios">价格与日期情景</h2><p data-opt="scenarioHelp">每格为该日期、该股价下的预估总盈亏；最后一列为到期损益。</p></div></div><div class="options-table-scroll"><table id="opt-table"></table></div></div>
     </section>
+    <section id="investors-view" class="calculator-view" hidden>
+      <div id="investor-dashboard">
+      <div class="breadcrumbs"><a href="#home" data-investor="home">首页</a><span>›</span><strong data-investor="title">投资者披露追踪</strong></div>
+      <div class="calculator-heading"><div class="calculator-icon" aria-hidden="true">◎</div><div><p class="eyebrow">DISCLOSURE WATCH / 03</p><h1 data-investor="title">投资者披露追踪</h1><p data-investor="intro">查看基金交易、内幕交易和公开持仓披露。</p></div></div>
+      <div class="investor-note" data-investor="note">披露有延迟，并不等同于实时交易。ARK 是基金交易；13F 是季度末持仓快照；国会披露金额通常为区间，交易人可能是家庭成员。</div>
+      <div class="investor-toolbar"><button id="investor-refresh" class="primary-button" type="button" data-investor="refresh">检查更新</button><button id="investor-alerts" class="options-secondary" type="button">启用浏览器提醒</button><span id="investor-status" role="status" aria-live="polite"></span></div><p id="investor-alert-status" role="status" class="investor-alert-status"></p>
+      <div class="investor-sources" id="investor-sources"></div>
+      <div class="options-card investor-section"><div class="options-section-head"><div><span class="step-number">01 / DISCLOSURES</span><h2 data-investor="events">披露事件</h2></div></div><div class="investor-filters"><label><span data-investor="source">来源</span><select id="investor-source"><option value="" data-investor="all">全部</option><option value="form4">Form 4</option><option value="ark_daily">ARK</option><option value="congress">PTR</option><option value="13f">13F</option><option value="13d">13D</option></select></label><label><span data-investor="search">搜索人物或代码</span><input id="investor-search" type="search" placeholder="姓名 / ticker"></label></div><div id="investor-events" aria-live="polite"></div></div>
+      <div class="options-card investor-section"><div class="options-section-head"><div><span class="step-number">02 / WATCHLIST</span><h2 data-investor="roster">关注名单</h2><p data-investor="identity">未核验唯一标识的对象不会按姓名自动匹配。</p></div></div><div id="investor-roster"></div></div>
+      </div>
+      <div id="investor-profile" hidden></div>
+    </section>
   </main>
   <footer class="site-footer">
     <div class="footer-identity"><a class="footer-brand" href="#home">数值工具箱</a><span>为日常计算，留一处简单。</span></div>
     <div class="footer-credits"><p class="footer-copyright">© 2026 Respect LLC</p><p>设计与开发 <span aria-hidden="true">·</span> Eastwood Management Services Limited</p></div>
   </footer>
   <script src="/app.js"></script>
+  <script src="/investors.js"></script>
+  <script src="/ark-position-chart.js"></script>
+  <script src="/ark-holdings.js"></script>
+  <script src="/investor-profile.js"></script>
   <script src="/options-math.js"></script>
   <script src="/options.js?v=20261111-expiry-controls"></script>
   <script>document.documentElement.classList.remove("loading-language");</script>

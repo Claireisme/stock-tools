@@ -9,12 +9,15 @@ from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import investor_tracker
+import investor_profiles
+import ark_history
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlencode, urlsplit
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parent
-ASSETS = {'/zh': ('index.html', 'text/html; charset=utf-8'), '/zh/': ('index.html', 'text/html; charset=utf-8'), '/': ('index.html', 'text/html; charset=utf-8'), '/index.html': ('index.html', 'text/html; charset=utf-8'), '/style.css': ('style.css', 'text/css; charset=utf-8'), '/app.js': ('app.js', 'text/javascript; charset=utf-8'), '/options.css': ('options.css', 'text/css; charset=utf-8'), '/options.js': ('options.js', 'text/javascript; charset=utf-8'), '/options-math.js': ('options-math.js', 'text/javascript; charset=utf-8')}
+ASSETS = {'/ark-position-chart.js': ('ark-position-chart.js', 'text/javascript; charset=utf-8'), '/ark-holdings.js': ('ark-holdings.js', 'text/javascript; charset=utf-8'), '/investor-profile.js': ('investor-profile.js', 'text/javascript; charset=utf-8'), '/investors.js': ('investors.js', 'text/javascript; charset=utf-8'), '/investors.css': ('investors.css', 'text/css; charset=utf-8'), '/zh': ('index.html', 'text/html; charset=utf-8'), '/zh/': ('index.html', 'text/html; charset=utf-8'), '/': ('index.html', 'text/html; charset=utf-8'), '/index.html': ('index.html', 'text/html; charset=utf-8'), '/style.css': ('style.css', 'text/css; charset=utf-8'), '/app.js': ('app.js', 'text/javascript; charset=utf-8'), '/options.css': ('options.css', 'text/css; charset=utf-8'), '/options.js': ('options.js', 'text/javascript; charset=utf-8'), '/options-math.js': ('options-math.js', 'text/javascript; charset=utf-8')}
 
 
 def quote_symbol(market, code):
@@ -518,6 +521,82 @@ def check_source(source):
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         url = urlsplit(self.path)
+        if url.path == '/api/investors/ark-holdings/history':
+            try:
+                params = parse_qs(url.query)
+                try:
+                    env = alpaca_setting('ALPACA_ENV', 'paper').strip().lower()
+                except OptionsDataError:
+                    env = 'paper'
+                asset_host = 'https://api.alpaca.markets' if env == 'live' else 'https://paper-api.alpaca.markets'
+                self.send_json(200, ark_history.history(investor_tracker.db, params.get('fund', [''])[0], params.get('security_id', [''])[0], alpaca_json, asset_host=asset_host))
+            except LookupError as error:
+                self.send_json(404, {'error': str(error)})
+            except (ValueError, TypeError) as error:
+                self.send_json(400, {'error': str(error)})
+            return
+        if url.path == '/api/investors/ark-holdings':
+            try:
+                fund = parse_qs(url.query).get('fund', ['ARKK'])[0]
+                self.send_json(200, investor_tracker.ark_holdings.snapshot(investor_tracker.db, fund))
+            except ValueError as error:
+                self.send_json(400, {'error': str(error)})
+            return
+        if url.path == '/api/investors/profile':
+            try:
+                params = parse_qs(url.query)
+                person = params.get('id', [''])[0]
+                year = params.get('year', [''])[0]
+                side = params.get('side', [''])[0]
+                fund = params.get('fund', [''])[0].upper()
+                offset = int(params.get('offset', ['0'])[0])
+                limit = int(params.get('limit', ['30'])[0])
+                query = params.get('q', [''])[0].strip()
+                self.send_json(200, investor_profiles.profile(investor_tracker, person, year, side, fund, offset, limit, query))
+            except LookupError as error:
+                self.send_json(404, {'error': str(error)})
+            except (ValueError, TypeError) as error:
+                self.send_json(400, {'error': str(error)})
+            except OSError as error:
+                self.send_json(500, {'error': str(error)})
+            return
+        if url.path == '/api/investors/alerts':
+            try:
+                params = parse_qs(url.query)
+                after = params.get('after', [None])[0]
+                if after is not None and (not after.isdigit() or len(after) > 18):
+                    raise ValueError('无效的提醒游标。')
+                with investor_tracker.db() as conn:
+                    if after is None:
+                        latest = conn.execute('SELECT COALESCE(MAX(sequence), 0) FROM alert_feed').fetchone()[0]
+                        self.send_json(200, {'cursor': latest, 'events': []})
+                    else:
+                        rows = conn.execute('SELECT sequence, payload FROM alert_feed WHERE sequence > ? ORDER BY sequence LIMIT 100', (int(after),)).fetchall()
+                        current_house = investor_tracker.congress_tracker.current_house_filing_ids(investor_tracker.db)
+                        visible = []
+                        for _, payload in rows:
+                            event = json.loads(payload)
+                            if not investor_tracker.visible_event(event, current_house):
+                                continue
+                            if event.get('id', '').startswith('house:'):
+                                current = conn.execute('SELECT payload FROM events WHERE id = ?', (event['id'],)).fetchone()
+                                if not current or current[0] != payload:
+                                    continue
+                            visible.append(event)
+                        self.send_json(200, {'cursor': rows[-1][0] if rows else int(after), 'events': visible})
+            except (OSError, ValueError) as error:
+                self.send_json(400, {'error': str(error)})
+            return
+        if url.path == '/api/investors':
+            try:
+                source = parse_qs(url.query).get('source', [''])[0]
+                if source not in ('', 'ark', 'form4', 'congress', '13f', '13d'):
+                    raise ValueError('无效的数据来源。')
+                query = parse_qs(url.query).get('q', [''])[0].strip()[:80]
+                self.send_json(200, investor_tracker.snapshot(source or None, query or None))
+            except (OSError, ValueError) as error:
+                self.send_json(500, {'error': str(error)})
+            return
         if url.path in ('/api/options/expirations', '/api/options/chain'):
             params = parse_qs(url.query)
             try:
@@ -592,6 +671,17 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def do_POST(self):
+        if urlsplit(self.path).path == '/api/investors/refresh':
+            origin = self.headers.get('Origin')
+            host = self.headers.get('Host', '')
+            if origin and origin not in ('http://' + host, 'https://' + host):
+                self.send_json(403, {'error': '不允许跨站请求。'})
+                return
+            self.send_json(202, {'started': investor_tracker.start_refresh()})
+            return
+        self.send_error(404)
+
     def send_json(self, status, value):
         body = json.dumps(value, ensure_ascii=False).encode('utf-8')
         self.send_response(status)
@@ -617,4 +707,5 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=server_port, default=os.environ.get('PORT', '8000'), help='监听端口（默认 8000，也可设置 PORT）')
     port = parser.parse_args().port
     print(f'本地调试地址：http://127.0.0.1:{port}', flush=True)
+    investor_tracker.start_scheduler()
     ThreadingHTTPServer(('127.0.0.1', port), Handler).serve_forever()

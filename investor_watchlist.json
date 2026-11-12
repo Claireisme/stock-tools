@@ -1,0 +1,1019 @@
+{
+  "schema_version": "1.0",
+  "as_of_date": "2026-11-12",
+  "description": "US public market investor / insider / Congressional monitoring starter roster, not a performance ranking or verified trading track record",
+  "data_quality_rules": [
+    "Match to SEC CIK, legal filing entity and Congress BioGuide ID before production; never join by name only.",
+    "For SEC Form 4, distinguish open-market P/S from M/F/G and 10b5-1 planned trades.",
+    "Retain transaction_date, accepted_at, reported_at and observed_at separately; compute public information latency.",
+    "ARK trades are fund trades reported after market close; not Cathie Wood personal trades.",
+    "13F filings are snapshots of covered long positions at quarter-end; options reported without strike or expiry, and shorts are generally absent.",
+    "Congressional PTR figures are usually amount ranges, and can include spouses/dependents.",
+    "Review Senate eFD commercial-use limitations before commercializing the data.",
+    "Recheck reporting-person roles, employment, filing status and public-source licensing regularly.",
+    "No entry represents a claim of superior investment returns or a recommendation to copy a trade."
+  ],
+  "records": [
+    {
+      "id": "cathie-wood",
+      "name_en": "Cathie Wood",
+      "name_zh": "凯西·伍德",
+      "category": "ark_daily",
+      "associated_entity": "ARK Investment Management",
+      "related_tickers": [
+        "ARKK"
+      ],
+      "chamber": null,
+      "disclosure_form": "ARK trade notification / daily holdings",
+      "expected_disclosure_lag": "After end-of-day execution (not guaranteed every day)",
+      "monitoring_scope": "fund_trades_not_personal",
+      "official_source_url": "https://www.ark-funds.com/ark-trade-notifications",
+      "reporting_person_cik": null,
+      "notes": "Daily ARK ETF portfolio trades; not Cathie Wood personal-account trades. Portfolio files exclude some flows.",
+      "enabled": true
+    },
+    {
+      "id": "ryan-cohen",
+      "name_en": "Ryan Cohen",
+      "name_zh": "瑞安·科恩",
+      "category": "form4",
+      "associated_entity": "GameStop",
+      "related_tickers": [
+        "GME"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001767470",
+      "notes": "2026-10-13 open-market P purchases officially filed same day.",
+      "enabled": true,
+      "issuer_cik": "0001326380",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1326380/000092189526002670/0000921895-26-002670-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "jensen-huang",
+      "name_en": "Jensen Huang",
+      "name_zh": "黄仁勋",
+      "category": "form4",
+      "associated_entity": "NVIDIA",
+      "related_tickers": [
+        "NVDA"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001197649",
+      "notes": "Scheduled 10b5-1 sales/other non-discretionary activity may appear.",
+      "enabled": true,
+      "issuer_cik": "0001045810",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000287/0001045810-24-000287-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "lisa-su",
+      "name_en": "Lisa Su",
+      "name_zh": "苏姿丰",
+      "category": "form4",
+      "associated_entity": "AMD",
+      "related_tickers": [
+        "AMD"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001405109",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0000002488",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000178/0000002488-26-000178-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "satya-nadella",
+      "name_en": "Satya Nadella",
+      "name_zh": "萨提亚·纳德拉",
+      "category": "form4",
+      "associated_entity": "Microsoft",
+      "related_tickers": [
+        "MSFT"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001513142",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0000789019",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/789019/000078901925000067/0000789019-25-000067-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "amy-hood",
+      "name_en": "Amy Hood",
+      "name_zh": "艾米·胡德",
+      "category": "form4",
+      "associated_entity": "Microsoft",
+      "related_tickers": [
+        "MSFT"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001576843",
+      "notes": "CFO",
+      "enabled": true,
+      "issuer_cik": "0000789019",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/789019/000078901926000045/0000789019-26-000045-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "elon-musk",
+      "name_en": "Elon Musk",
+      "name_zh": "埃隆·马斯克",
+      "category": "form4",
+      "associated_entity": "Tesla",
+      "related_tickers": [
+        "TSLA"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001494730",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0001318605",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1318605/000110465925109263/0001104659-25-109263-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "mark-zuckerberg",
+      "name_en": "Mark Zuckerberg",
+      "name_zh": "马克·扎克伯格",
+      "category": "form4",
+      "associated_entity": "Meta",
+      "related_tickers": [
+        "META"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001548760",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0001326801",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1326801/000095010324002472/0000950103-24-002472-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "sundar-pichai",
+      "name_en": "Sundar Pichai",
+      "name_zh": "桑达尔·皮查伊",
+      "category": "form4",
+      "associated_entity": "Alphabet",
+      "related_tickers": [
+        "GOOGL",
+        "GOOG"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001534753",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0001652044",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1652044/000095017024133433/0000950170-24-133433-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "john-ternus",
+      "name_en": "John Ternus",
+      "name_zh": "约翰·特努斯",
+      "category": "form4",
+      "associated_entity": "Apple",
+      "related_tickers": [
+        "AAPL"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0002148403",
+      "notes": "Apple CEO since 2026-09-01.",
+      "enabled": true,
+      "issuer_cik": "0000320193",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126035362/0001140361-26-035362-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "tim-cook",
+      "name_en": "Tim Cook",
+      "name_zh": "蒂姆·库克",
+      "category": "form4",
+      "associated_entity": "Apple",
+      "related_tickers": [
+        "AAPL"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001214156",
+      "notes": "Apple executive chairman since 2026-09-01.",
+      "enabled": true,
+      "issuer_cik": "0000320193",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126038021/0001140361-26-038021-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "andy-jassy",
+      "name_en": "Andy Jassy",
+      "name_zh": "安迪·贾西",
+      "category": "form4",
+      "associated_entity": "Amazon",
+      "related_tickers": [
+        "AMZN"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001374545",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0001018724",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872424000054/0001018724-24-000054-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "jeff-bezos",
+      "name_en": "Jeff Bezos",
+      "name_zh": "杰夫·贝佐斯",
+      "category": "form4",
+      "associated_entity": "Amazon",
+      "related_tickers": [
+        "AMZN"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001043298",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0001018724",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000110/0001018724-25-000110-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "brian-armstrong",
+      "name_en": "Brian Armstrong",
+      "name_zh": "布莱恩·阿姆斯特朗",
+      "category": "form4",
+      "associated_entity": "Coinbase",
+      "related_tickers": [
+        "COIN"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001851492",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0001679788",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000139/0001679788-25-000139-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "alex-karp",
+      "name_en": "Alex Karp",
+      "name_zh": "亚历克斯·卡普",
+      "category": "form4",
+      "associated_entity": "Palantir",
+      "related_tickers": [
+        "PLTR"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001823951",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0001321655",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165523000013/0001321655-23-000013-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "michael-saylor",
+      "name_en": "Michael Saylor",
+      "name_zh": "迈克尔·塞勒",
+      "category": "form4",
+      "associated_entity": "Strategy (formerly MicroStrategy)",
+      "related_tickers": [
+        "MSTR"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001079782",
+      "notes": "Form 4 tracks his MSTR equity; Strategy corporate bitcoin buys are different disclosures.",
+      "enabled": true,
+      "issuer_cik": "0001050446",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1050446/000095017024043351/0000950170-24-043351-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "jamie-dimon",
+      "name_en": "Jamie Dimon",
+      "name_zh": "杰米·戴蒙",
+      "category": "form4",
+      "associated_entity": "JPMorgan Chase",
+      "related_tickers": [
+        "JPM"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001195345",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0000019617",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/19617/000122520824005131/0001225208-24-005131-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "hock-tan",
+      "name_en": "Hock Tan",
+      "name_zh": "陈福阳",
+      "category": "form4",
+      "associated_entity": "Broadcom",
+      "related_tickers": [
+        "AVGO"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001211588",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0001730168",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000028/0001730168-26-000028-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "david-ricks",
+      "name_en": "David Ricks",
+      "name_zh": "戴夫·里克斯",
+      "category": "form4",
+      "associated_entity": "Eli Lilly",
+      "related_tickers": [
+        "LLY"
+      ],
+      "chamber": null,
+      "disclosure_form": "SEC Form 4",
+      "expected_disclosure_lag": "Typically within 2 business days of reportable transaction",
+      "monitoring_scope": "issuer_specific_insider_transactions",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001538604",
+      "notes": "",
+      "enabled": true,
+      "issuer_cik": "0000059478",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/59478/000005947823000292/0000059478-23-000292-index.htm",
+        "method": "SEC Form 4 filing identifies reporting person and associated issuer",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "nancy-pelosi",
+      "name_en": "Nancy Pelosi",
+      "name_zh": "南希·佩洛西",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "ro-khanna",
+      "name_en": "Ro Khanna",
+      "name_zh": "罗·康纳",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "josh-gottheimer",
+      "name_en": "Josh Gottheimer",
+      "name_zh": "乔希·戈特海默",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "michael-t-mccaul",
+      "name_en": "Michael T. McCaul",
+      "name_zh": "迈克尔·麦考尔",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "suzan-delbene",
+      "name_en": "Suzan DelBene",
+      "name_zh": "苏珊·德尔贝内",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "kevin-hern",
+      "name_en": "Kevin Hern",
+      "name_zh": "凯文·赫恩",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "maria-elvira-salazar",
+      "name_en": "Maria Elvira Salazar",
+      "name_zh": "玛丽亚·埃尔维拉·萨拉萨尔",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "tommy-tuberville",
+      "name_en": "Tommy Tuberville",
+      "name_zh": "汤米·图伯维尔",
+      "category": "congress",
+      "associated_entity": "Senate member",
+      "related_tickers": [],
+      "chamber": "Senate",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://efdsearch.senate.gov/search/",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "gilbert-cisneros",
+      "name_en": "Gilbert Cisneros",
+      "name_zh": "吉尔伯特·西斯内罗斯",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "april-mcclain-delaney",
+      "name_en": "April McClain Delaney",
+      "name_zh": "艾普丽尔·麦克莱恩·德莱尼",
+      "category": "congress",
+      "associated_entity": "House member",
+      "related_tickers": [],
+      "chamber": "House",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://disclosures-clerk.house.gov/FinancialDisclosure",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "richard-blumenthal",
+      "name_en": "Richard Blumenthal",
+      "name_zh": "理查德·布卢门撒尔",
+      "category": "congress",
+      "associated_entity": "Senate member",
+      "related_tickers": [],
+      "chamber": "Senate",
+      "disclosure_form": "Congressional PTR",
+      "expected_disclosure_lag": "Earlier of 30 days after awareness or 45 days after transaction",
+      "monitoring_scope": "member_spouse_dependent_household_transactions",
+      "official_source_url": "https://efdsearch.senate.gov/search/",
+      "reporting_person_cik": null,
+      "notes": "PTR amount generally reported as range; member, spouse or dependents may be the transactor. Senate filings carry restrictions on commercial use.",
+      "enabled": true
+    },
+    {
+      "id": "warren-buffett-berkshire-hathaway",
+      "name_en": "Warren Buffett",
+      "name_zh": "沃伦·巴菲特",
+      "category": "13f",
+      "associated_entity": "Berkshire Hathaway",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001067983",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "BERKSHIRE HATHAWAY INC",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312526352200/0001193125-26-352200-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "bill-ackman-pershing-square-capital-",
+      "name_en": "Bill Ackman",
+      "name_zh": "比尔·阿克曼",
+      "category": "13f",
+      "associated_entity": "Pershing Square Capital Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001336528",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "Pershing Square Capital Management, L.P.",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1336528/000117266124003511/0001172661-24-003511-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "david-tepper-appaloosa-management",
+      "name_en": "David Tepper",
+      "name_zh": "大卫·泰珀",
+      "category": "13f",
+      "associated_entity": "Appaloosa Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001656456",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "Appaloosa LP",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1656456/000165645625000006/0001656456-25-000006-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "stanley-druckenmiller-duquesne-family-office",
+      "name_en": "Stanley Druckenmiller",
+      "name_zh": "斯坦利·德鲁肯米勒",
+      "category": "13f",
+      "associated_entity": "Duquesne Family Office",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001536411",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "Duquesne Family Office LLC",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1536411/000153641126000006/0001536411-26-000006-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "seth-klarman-baupost-group",
+      "name_en": "Seth Klarman",
+      "name_zh": "赛斯·卡拉曼",
+      "category": "13f",
+      "associated_entity": "Baupost Group",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001061768",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "BAUPOST GROUP LLC/MA",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1061768/000106176825000007/0001061768-25-000007-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "david-einhorn-dme-capital-greenlight-a",
+      "name_en": "David Einhorn",
+      "name_zh": "大卫·艾因霍恩",
+      "category": "13f",
+      "associated_entity": "DME Capital / Greenlight-associated filings",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001489933",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "DME Capital Management, LP",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1489933/000117266125002307/0001172661-25-002307-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "daniel-loeb-third-point",
+      "name_en": "Daniel Loeb",
+      "name_zh": "丹尼尔·勒布",
+      "category": "13f",
+      "associated_entity": "Third Point",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001040273",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "Third Point LLC",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1040273/000108514625003337/0001085146-25-003337-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "carl-icahn-icahn-capital-icahn-ente",
+      "name_en": "Carl Icahn",
+      "name_zh": "卡尔·伊坎",
+      "category": "13f",
+      "associated_entity": "Icahn Capital / Icahn Enterprises",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0000921669",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "ICAHN CARL C",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/921669/000153949726001469/0001539497-26-001469-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "li-lu-himalaya-capital-managem",
+      "name_en": "Li Lu",
+      "name_zh": "李录",
+      "category": "13f",
+      "associated_entity": "Himalaya Capital Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001709323",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "Himalaya Capital Management LLC",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1709323/000170932325000001/0001709323-25-000001-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "brad-gerstner-altimeter-capital-manage",
+      "name_en": "Brad Gerstner",
+      "name_zh": "布拉德·格斯特纳",
+      "category": "13f",
+      "associated_entity": "Altimeter Capital Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001541617",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "Altimeter Capital Management, LP",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1541617/000154161725000013/0001541617-25-000013-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "philippe-laffont-coatue-management",
+      "name_en": "Philippe Laffont",
+      "name_zh": "菲利普·拉丰",
+      "category": "13f",
+      "associated_entity": "Coatue Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001135730",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "COATUE MANAGEMENT LLC",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1135730/000091957425003179/0000919574-25-003179-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "paul-singer-elliott-investment-manag",
+      "name_en": "Paul Singer",
+      "name_zh": "保罗·辛格",
+      "category": "13f",
+      "associated_entity": "Elliott Investment Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001791786",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "Elliott Investment Management L.P.",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1791786/000101359425001045/0001013594-25-001045-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "chris-hohn-tci-fund-management",
+      "name_en": "Chris Hohn",
+      "name_zh": "克里斯·霍恩",
+      "category": "13f",
+      "associated_entity": "TCI Fund Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001647251",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "TCI Fund Management Ltd",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1647251/000164725126000007/0001647251-26-000007-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "howard-marks-oaktree-capital-manageme",
+      "name_en": "Howard Marks",
+      "name_zh": "霍华德·马克斯",
+      "category": "13f",
+      "associated_entity": "Oaktree Capital Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0000949509",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "OAKTREE CAPITAL MANAGEMENT LP",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/949509/000094950923000005/0000949509-23-000005-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "ken-griffin-citadel-advisors",
+      "name_en": "Ken Griffin",
+      "name_zh": "肯·格里芬",
+      "category": "13f",
+      "associated_entity": "Citadel Advisors",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001423053",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "CITADEL ADVISORS LLC",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1423053/000095012325002739/0000950123-25-002739-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "mohnish-pabrai-pabrai-investment-funds",
+      "name_en": "Mohnish Pabrai",
+      "name_zh": "莫尼什·帕伯莱",
+      "category": "13f",
+      "associated_entity": "Pabrai Investment Funds",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001549575",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "Dalal Street, LLC",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1549575/000154957526000009/0001549575-26-000009-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    },
+    {
+      "id": "chase-coleman-tiger-global-management",
+      "name_en": "Chase Coleman",
+      "name_zh": "蔡斯·科尔曼",
+      "category": "13f",
+      "associated_entity": "Tiger Global Management",
+      "related_tickers": [],
+      "chamber": null,
+      "disclosure_form": "SEC Form 13F",
+      "expected_disclosure_lag": "Quarter-end holdings, due within 45 days after quarter end",
+      "monitoring_scope": "institutional_manager_portfolio_not_personal",
+      "official_source_url": "https://www.sec.gov/search-filings",
+      "reporting_person_cik": "0001167483",
+      "notes": "13F is a report of institutional holdings only, not a full transaction journal or the named person's own portfolio. Confirm current manager CIK and filing status at integration time.",
+      "enabled": true,
+      "filing_entity": "TIGER GLOBAL MANAGEMENT LLC",
+      "identity_evidence": {
+        "url": "https://www.sec.gov/Archives/edgar/data/1167483/000091957425006931/0000919574-25-006931-index.htm",
+        "method": "SEC 13F filing identifies filing manager; associated investor is watchlist context, not personal portfolio",
+        "verified_on": "2026-11-12"
+      }
+    }
+  ]
+}

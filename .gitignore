@@ -6,3 +6,7 @@ __pycache__/
 .openai/
 dist/
 contract_output/
+investor_events.sqlite3*
+.senate-consent.json
+.venv/
+.sec-config.json

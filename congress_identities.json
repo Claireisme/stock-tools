@@ -1,0 +1,18 @@
+{
+  "source": "https://github.com/unitedstates/congress-legislators/blob/main/legislators-current.yaml",
+  "index_source": "https://disclosures-clerk.house.gov/FinancialDisclosure/ViewSearch",
+  "scope": "119th Congress, 2025-01-03 through 2027-01-02; Clerk matches use member title, exact filing name, district and date, since index has no BioGuide ID.",
+  "members": [
+    {"id":"nancy-pelosi","bioguide_id":"P000197","chamber":"House","district":"CA11","first":"Nancy","last":"Pelosi"},
+    {"id":"ro-khanna","bioguide_id":"K000389","chamber":"House","district":"CA17","first":"Rohit","last":"Khanna"},
+    {"id":"josh-gottheimer","bioguide_id":"G000583","chamber":"House","district":"NJ05","first":"Josh","last":"Gottheimer"},
+    {"id":"michael-t-mccaul","bioguide_id":"M001157","chamber":"House","district":"TX10","first":"Michael T.","last":"McCaul"},
+    {"id":"suzan-delbene","bioguide_id":"D000617","chamber":"House","district":"WA01","first":"Suzan K.","last":"DelBene"},
+    {"id":"kevin-hern","bioguide_id":"H001082","chamber":"House","district":"OK01","first":"Kevin","last":"Hern"},
+    {"id":"maria-elvira-salazar","bioguide_id":"S000168","chamber":"House","district":"FL27","first":"Maria Elvira","last":"Salazar"},
+    {"id":"gilbert-cisneros","bioguide_id":"C001123","chamber":"House","district":"CA31","first":"Gilbert","last":"Cisneros"},
+    {"id":"april-mcclain-delaney","bioguide_id":"M001232","chamber":"House","district":"MD06","first":"April McClain","last":"Delaney"},
+    {"id":"tommy-tuberville","bioguide_id":"T000278","chamber":"Senate","state":"AL"},
+    {"id":"richard-blumenthal","bioguide_id":"B001277","chamber":"Senate","state":"CT"}
+  ]
+}
