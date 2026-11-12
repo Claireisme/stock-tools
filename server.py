@@ -518,6 +518,39 @@ def check_source(source):
     return results
 
 
+def _origin_tuple(value):
+    try:
+        parsed = urlsplit(value)
+        if (parsed.scheme not in ('http', 'https') or not parsed.hostname or parsed.username is not None
+                or parsed.password is not None or parsed.path or parsed.query or parsed.fragment
+                or any(ch.isspace() for ch in value)):
+            return None
+        return (parsed.scheme, parsed.hostname.lower(), parsed.port or (443 if parsed.scheme == 'https' else 80))
+    except ValueError:
+        return None
+
+
+def refresh_origin_allowed(headers):
+    if headers.get('Sec-Fetch-Site', '').lower() in ('cross-site', 'same-site'):
+        return False
+    origins = headers.get_all('Origin', [])
+    if not origins:
+        return True
+    if len(origins) != 1:
+        return False
+    origin = _origin_tuple(origins[0])
+    if not origin:
+        return False
+    configured_value = os.environ.get('PUBLIC_ORIGIN', '').strip()
+    if configured_value:
+        configured = _origin_tuple(configured_value.rstrip('/'))
+        return configured is not None and origin == configured
+    host_values = headers.get_all('Host', [])
+    if len(host_values) != 1:
+        return False
+    return origin == _origin_tuple(origin[0] + '://' + host_values[0])
+
+
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         url = urlsplit(self.path)
@@ -673,9 +706,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if urlsplit(self.path).path == '/api/investors/refresh':
-            origin = self.headers.get('Origin')
-            host = self.headers.get('Host', '')
-            if origin and origin not in ('http://' + host, 'https://' + host):
+            if not refresh_origin_allowed(self.headers):
                 self.send_json(403, {'error': '不允许跨站请求。'})
                 return
             self.send_json(202, {'started': investor_tracker.start_refresh()})
