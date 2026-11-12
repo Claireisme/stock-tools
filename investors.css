@@ -14,6 +14,10 @@
 .investor-event p,.investor-person p { margin:7px 0; color:#63736b; font-size:13px; line-height:1.6; overflow-wrap:anywhere; }
 .investor-event a { color:#317454; font-size:13px; }
 .investor-event-head span,.investor-tag { color:#41775d; font-size:12px; background:#edf5ef; border-radius:20px; padding:5px 10px; white-space:nowrap; }
+.investor-event-head .investor-event-action { border:1px solid transparent; font-weight:700; }
+.investor-event-head .investor-event-action-buy { color:#17633e; background:#e3f4e9; border-color:#b9dfc7; }
+.investor-event-head .investor-event-action-sell { color:#9e382d; background:#fcebe8; border-color:#efc3bc; }
+.investor-event-head .investor-event-action-neutral { color:#53665a; background:#eef2ef; border-color:#dae3dc; }
 .investor-empty { color:#63736b; padding:15px 0; }
 @media(max-width:600px) { .investor-event-head,.investor-person { flex-wrap:wrap; } }
 .investor-alert-status { margin:-8px 0 20px; color:#63736b; font-size:13px; }

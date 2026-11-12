@@ -53,6 +53,26 @@
   }
   window.InvestorTimeZone = {get: () => selectedTimeZone, format: formatTime, createControl: timeZoneControl};
   $('investor-timezone-control').append(timeZoneControl());
+  function eventActionTone(event) {
+    const kind = String(event.event_type || '');
+    if (event.source === 'ark') return kind === 'buy' ? 'buy' : kind === 'sell' ? 'sell' : 'neutral';
+    if (event.source === 'congress') return kind === 'P' ? 'buy' : /^S(?:\s*\((?:partial|full)\))?$/i.test(kind) ? 'sell' : 'neutral';
+    if (event.source === 'form4') return kind.startsWith('P ') ? 'buy' : kind.startsWith('S ') ? 'sell' : 'neutral';
+    if (event.source === '13f') return ['新建仓', '增仓'].includes(kind) ? 'buy' : ['减仓', '退出持仓'].includes(kind) ? 'sell' : 'neutral';
+    return 'neutral';
+  }
+  function eventActionLabel(event) {
+    const kind = String(event.event_type || '');
+    if (event.source === 'ark') return kind === 'buy' ? t('买入','Buy') : kind === 'sell' ? t('卖出','Sell') : kind;
+    if (event.source === 'congress') {
+      if (kind === 'P') return t('买入','Buy');
+      if (/^S\s*\(partial\)$/i.test(kind)) return t('部分卖出','Partial sale');
+      if (/^S\s*\(full\)$/i.test(kind)) return t('全部卖出','Full sale');
+      if (kind === 'S') return t('卖出','Sell');
+      if (kind === 'E') return t('交换','Exchange');
+    }
+    return kind;
+  }
   let data = null, loaded = false, timer, searchTimer, loadSequence = 0;
   function render() {
     if (!data) return;
@@ -73,8 +93,8 @@
     for (const e of shown) {
       const r = byId[e.investor_id] || {}, row = el('article', null, 'investor-event');
       let detail = e.details; try { if (typeof detail === 'string' && detail.startsWith('{')) detail = JSON.parse(detail); } catch (_) {}
-      const label = e.source === 'ark' ? (e.event_type === 'buy' ? t('买入','Buy') : e.event_type === 'sell' ? t('卖出','Sell') : e.event_type) : e.event_type;
-      const head = el('div', null, 'investor-event-head'); const name = `${r.name_zh || r.name_en || e.investor_id || (detail && detail.candidate_name) || '—'} · ${e.ticker || (detail && detail.issuer) || '—'}`; const title = e.investor_id ? el('a', name, 'investor-profile-link') : el('strong', name); if (e.investor_id) title.href = `#investors/${encodeURIComponent(e.investor_id)}`; head.append(title, el('span', `${e.source || ''} / ${label || '—'}`)); row.append(head);
+      const label = eventActionLabel(e);
+      const head = el('div', null, 'investor-event-head'); const name = `${r.name_zh || r.name_en || e.investor_id || (detail && detail.candidate_name) || '—'} · ${e.ticker || (detail && detail.issuer) || '—'}`; const title = e.investor_id ? el('a', name, 'investor-profile-link') : el('strong', name); if (e.investor_id) title.href = `#investors/${encodeURIComponent(e.investor_id)}`; head.append(title, el('span', `${e.source || ''} / ${label || '—'}`, `investor-event-action investor-event-action-${eventActionTone(e)}`)); row.append(head);
       const details = [e.transaction_date && `${t('交易日期','Transaction')}: ${formatTime(e.transaction_date)}`, e.accepted_at && `${t('受理','Accepted')}: ${formatTime(e.accepted_at)}`, e.reported_at && `${t('披露','Reported')}: ${formatTime(e.reported_at)}`, e.observed_at && `${t('采集','Observed')}: ${formatTime(e.observed_at)}`, e.shares != null && `${e.source === '13f' ? t('持仓变化','Position change') : t('数量','Shares')}: ${e.shares}`, e.price != null && `${t('价格','Price')}: ${e.price}`, e.plan_10b5_1 && t('申报文件标记 10b5-1','10b5-1 indicated on filing')].filter(Boolean);
       row.append(el('p', details.join(' · ')));
       if (detail && typeof detail === 'object') {
